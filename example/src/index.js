@@ -1,37 +1,40 @@
-import React, { Component } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import SignaturePad from '../../src/index.tsx'
 
 import * as styles from './styles.module.css'
 
-class App extends Component {
-  state = { trimmedDataURL: null }
+const App = () => {
+  const [trimmedDataURL, setTrimmedDataURL] = useState(null);
 
-  sigPad = {}
+  let sigPad = {}
+  let signed = false;
 
-  clear = () => {
-    this.sigPad.clear()
+
+  
+  const clear = () => {
+  //  sigPad.clear()
   }
 
-  trim = () => {
-    this.setState({
-      trimmedDataURL: this.sigPad.getTrimmedCanvas().toDataURL('image/png')
-    })
+  const trim = () => {
+    setTrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
   }
-
-  render () {
-    const { trimmedDataURL } = this.state
-    return <div className={styles.container}>
-      <div className={styles.sigContainer}>
-        <SignaturePad canvasProps={{ className: styles.sigPad }}
-          ref={(ref) => { this.sigPad = ref }} />
+  const startDraw = ()=>{
+   // console.log('start');
+   // sigPad.clear();
+  }
+  return (
+    <div className={styles.container}>
+      <div className={styles.sigContainer} style={{width: '400px', height:'200px'}}>
+        <SignaturePad onBegin={startDraw} canvasProps={{ className: styles.sigPad, width:'400px', height: '200px' }}
+          ref={(ref) => { sigPad = ref }} />
       </div>
       <div>
-        <button className={styles.buttons} onClick={this.clear}>
+        <button className={styles.buttons} onClick={clear}>
           Clear
         </button>
-        <button className={styles.buttons} onClick={this.trim}>
+        <button className={styles.buttons} onClick={trim}>
           Trim
         </button>
       </div>
@@ -40,7 +43,7 @@ class App extends Component {
           src={trimmedDataURL} />
         : null}
     </div>
-  }
+  )
 }
 
 createRoot(document.getElementById('container')).render(<App />)
